@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mes demandes — Ａｐｐｓ⁵⁰９</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#000,#2c2c2c);
+  color:#fff;
+}
+header{
+  background:rgba(0,0,0,0.7);
+  padding:20px;
+  text-align:center;
+  border-bottom:1px solid rgba(255,255,255,0.2);
+}
+header h1{
+  margin:0;
+  font-size:1.6rem;
+  background:linear-gradient(90deg,#fff,#aaa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.container{
+  max-width:900px;
+  margin:20px auto;
+  padding:15px;
+}
+.profile-box{
+  text-align:center;
+  margin-bottom:25px;
+}
+.profile-box img{
+  width:90px;
+  height:90px;
+  border-radius:50%;
+  border:3px solid #00aaff;
+  object-fit:cover;
+}
+.profile-box h3{
+  margin:8px 0 0 0;
+}
+.profile-box p{
+  margin:5px 0;
+  color:#aaa;
+}
+.request-card{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(0,170,255,0.25);
+  border-radius:15px;
+  padding:15px;
+  margin-bottom:15px;
+}
+.request-card h3{
+  margin:0 0 10px 0;
+  color:#00aaff;
+}
+.status{
+  font-weight:bold;
+}
+.status.pending{ color:orange; }
+.status.accepted{ color:#00ff88; }
+.status.refused{ color:red; }
+
+button{
+  padding:10px 15px;
+  border:none;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+  margin:5px;
+}
+.back{
+  background:#00aa00;
+  color:white;
+}
+.back:hover{ background:#33cc33; }
+.logout{
+  background:red;
+  color:white;
+}
+.logout:hover{ background:#ff6600; }
+.goApp{
+  background:#0066ff;
+  color:white;
+}
+.goApp:hover{ background:#3399ff; }
+.deleteBtn{
+  background:#dc3545;
+  color:white;
+}
+.deleteBtn:hover{ background:#ff5555; }
+.whatsapp-link{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  text-decoration:none;
+  color:#25D366;
+  font-weight:bold;
+  font-size:1rem;
+  border:1px solid #25D366;
+  padding:8px 12px;
+  border-radius:12px;
+  transition:0.2s;
+}
+.whatsapp-link img{
+  display:block;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Mes demandes — Ａｐｐｓ⁵⁰９</h1>
+</header>
+
+<div class="container profile-box">
+  <img id="userPhoto" src="">
+  <h3 id="userName">—</h3>
+  <p id="userEmail">—</p>
+</div>
+
+<div class="container" id="requestsContainer">
+  <!-- Les demandes apparaîtront ici -->
+</div>
+
+<div class="container" style="text-align:center;">
+  <button class="back" onclick="location.href='profil.html'">⬅️ Retour Profil</button>
+  <button class="goApp" onclick="location.href='app509.html'">🌐 Aller à App509</button>
+  <button class="logout" id="logoutBtn">Déconnexion</button>
+</div>
+
+<!-- Bloc WhatsApp -->
+<div class="container" style="text-align:center; margin-top:20px;">
+  <a href="https://whatsapp.com/channel/0029Vb5PS7t4inoryNPX3j3g" target="_blank" class="whatsapp-link">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" width="24" height="24">
+    Follow the Savage divah channel on WhatsApp
+  </a>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyAufnNEFHPZLbMK-gwYotj4VB1bqBXw8l4",
+  authDomain: "app509cloud.firebaseapp.com",
+  projectId: "app509cloud",
+  storageBucket: "app509cloud.firebasestorage.app",
+  messagingSenderId: "445508086674",
+  appId: "1:445508086674:web:22d593d940bd328d436f4b"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const auth = firebase.auth();
+
+const container = document.getElementById("requestsContainer");
+
+auth.onAuthStateChanged(user => {
+  if(!user){
+    alert("❌ Veuillez vous connecter.");
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Affichage profil
+  document.getElementById("userPhoto").src = user.photoURL || "https://via.placeholder.com/90";
+  document.getElementById("userEmail").textContent = user.email;
+  document.getElementById("userName").textContent = user.displayName || "Utilisateur";
+
+  // Écoute en temps réel des demandes de cet utilisateur
+  db.collection("forms")
+    .where("userId","==",user.uid)
+    .orderBy("createdAt","desc")
+    .onSnapshot(snapshot=>{
+      container.innerHTML = "";
+      if(snapshot.empty){
+        container.innerHTML = "<p>Aucune demande trouvée.</p>";
+        return;
+      }
+
+      snapshot.forEach(doc=>{
+        const d = doc.data();
+        const statusClass =
+          d.status === "Accepté" ? "accepted" :
+          d.status === "Refusé" ? "refused" : "pending";
+
+        const card = document.createElement("div");
+        card.className = "request-card";
+        card.innerHTML = `
+          <h3>Demande</h3>
+          <p><strong>Email:</strong> ${d.email || "-"}</p>
+          <p><strong>Nom:</strong> ${d.fullName || "-"}</p>
+          <p><strong>Genre:</strong> ${d.gender || "-"}</p>
+          <p><strong>Téléphone:</strong>
+            ${d.phone ? `<a href="https://wa.me/${d.phone}" target="_blank">${d.phone}</a>` : "-"}
+          </p>
+          <p><strong>Réseau:</strong>
+            ${d.creatorLink ? `<a href="${d.creatorLink}" target="_blank">${d.creatorNetwork}</a>` : "-"}
+          </p>
+          <p><strong>Message:</strong> ${d.message || "-"}</p>
+          <p class="status ${statusClass}">
+            Statut : ${d.status || "En attente"}
+          </p>
+          <p><strong>Soumis le:</strong> ${d.createdAt?.toDate?.()?.toLocaleString() || "-"}</p>
+          <button class="deleteBtn" data-id="${doc.id}">Supprimer</button>
+        `;
+        container.appendChild(card);
+      });
+
+      // Boutons supprimer
+      container.querySelectorAll(".deleteBtn").forEach(btn=>{
+        btn.onclick = async ()=>{
+          if(confirm("❌ Voulez-vous vraiment supprimer cette demande ?")){
+            await db.collection("forms").doc(btn.dataset.id).delete();
+            alert("✅ Demande supprimée !");
+          }
+        };
+      });
+    }, err=>{
+      console.error("Erreur Firestore:", err);
+      container.innerHTML = "<p>Erreur lors du chargement des demandes.</p>";
+    });
+});
+
+// Déconnexion
+document.getElementById("logoutBtn").onclick = async ()=>{
+  await auth.signOut();
+  window.location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
