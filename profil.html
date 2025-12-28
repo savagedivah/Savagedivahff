@@ -1,1 +1,309 @@
 
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ａｐｐｓ⁵⁰９ | Profil</title>
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#000,#2c2c2c);
+  color:#fff;
+}
+.container{
+  max-width:420px;
+  margin:40px auto;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:18px;
+  padding:22px;
+  text-align:center;
+  display:none; /* caché jusqu'à acceptation de notice */
+}
+h2{
+  margin-top:0;
+  background:linear-gradient(90deg,#fff,#aaa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+label{
+  display:block;
+  margin-top:12px;
+  font-size:0.85rem;
+  color:#ccc;
+  text-align:left;
+}
+input{
+  width:100%;
+  padding:10px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.2);
+  background:rgba(0,0,0,0.5);
+  color:white;
+}
+button{
+  width:100%;
+  padding:12px;
+  margin-top:14px;
+  border:none;
+  border-radius:12px;
+  background:#00aaff;
+  color:black;
+  font-weight:600;
+  cursor:pointer;
+}
+button:hover{
+  background:#FFD700;
+}
+.small{
+  font-size:0.8rem;
+  color:#aaa;
+  margin-top:6px;
+}
+.admin-box{
+  margin-top:20px;
+  padding:14px;
+  border-radius:12px;
+  background:rgba(255,0,0,0.08);
+  border:1px solid rgba(255,0,0,0.3);
+}
+.role{
+  margin-top:10px;
+  font-weight:bold;
+  color:#00aaff;
+}
+.logout{
+  background:red;
+  color:white;
+}
+.profile-pic{
+  width:120px;
+  height:120px;
+  border-radius:50%;
+  border:4px solid #00aaff;
+  object-fit:cover;
+  margin-bottom:15px;
+}
+
+/* ===== Modal notice ===== */
+#noticeModal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.95);
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+}
+#noticeContent{
+  background:rgba(0,0,0,0.85);
+  color:white;
+  padding:20px;
+  border-radius:18px;
+  max-width:450px;
+  max-height:80vh;
+  overflow-y:auto;
+  text-align:left;
+  border:1px solid #00aaff;
+}
+#noticeContent h3{
+  text-align:center;
+  margin-bottom:15px;
+  background:linear-gradient(90deg,#fff,#aaa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+#noticeContent p{
+  margin-bottom:10px;
+  font-size:0.9rem;
+}
+#acceptBtn{
+  display:block;
+  margin:15px auto 0 auto;
+  padding:12px;
+  border:none;
+  border-radius:12px;
+  background:#00aaff;
+  color:black;
+  font-weight:bold;
+  cursor:pointer;
+  width:80%;
+}
+#acceptBtn:hover{
+  background:#FFD700;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== Modal Notice ===== -->
+<div id="noticeModal">
+  <div id="noticeContent">
+    <h3>Clan ‘’Ａｐｐｓ⁵⁰９ ‘’ N/A</h3>
+    <p><strong>Update règles</strong></p>
+    <p>C R E O L E   H A I T I A N 🇭🇹</p>
+    <p><strong>Règ 1:</strong> Respè, Disiplin, Responsablite</p>
+    <p><strong>Règ 2:</strong> Se pou w aktif ✅</p>
+    <p><strong>Règ 3:</strong> A koz de lekol lan nou diminuer nan pwen yo. Minimòm 5000 pwen pa semèn ni pou fille ni pou gason. Tout moun supoze fe 5000 pwen an pandan 7 jours sinon map metew deyo. Wap jwenn kado selman pou Guerre guild. Moun ki premye an 🥇 1118 💎 supoze fe 200 pwen. Wap selman banm ID ou puis tann mwen voyel baw.</p>
+    <p><strong>Règ 4:</strong> Move konpòtman ap lakòz ou deyo.</p>
+    <p><strong>Règ 5:</strong> Ou dwe fòme yon bon ekip pou w jwe.</p>
+    <p><strong>Règ 6:</strong> Guerre guid chak Mercredi, Samedi, Dimanch 7è pou 11è nan aswe. Tout moun dwe jwe svp. Et pandan guerre guid lan ou pa supoze jwe lot bagay ke li.</p>
+    <p><strong>Règ 7:</strong> Ａｐｐｓ⁵⁰９ guid lan dwe rete nan nivo 700k pwen chak semèn. Epi rete si nou vle metel nan Top Rejyonal la 🫰🏽</p>
+    <p><strong>Règ 8:</strong> Pa pataje kontni oswa anyen ki pa pou Free Fire.</p>
+    <p><strong>Règ 9:</strong> Ou pa dwe use hack ni jwe ak Hacker. Pa mande dyaman isit la. Si yon moun mande m, map metew deyo nan.</p>
+    <p><strong>Règ 10:</strong> Kvk, Or pvp, Vs lot Clan Vendredi, Samedi, Dimanche avant gè clan an. Fow gen gomme pou w change nomw sinon ou pap ka antre.</p>
+    <button id="acceptBtn">Accepte et Continue (Savage Divah)</button>
+  </div>
+</div>
+
+<div class="container" id="profileContainer">
+  <h2>Profil utilisateur</h2>
+
+  <img id="profilePic" class="profile-pic" src="https://via.placeholder.com/120" alt="Photo de profil">
+
+  <p><strong>Email :</strong></p>
+  <p id="email">—</p>
+
+  <label>Nom complet</label>
+  <input type="text" id="fullname" placeholder="Votre nom">
+
+  <button id="saveProfile">💾 Enregistrer le profil</button>
+
+  <div class="role">
+    Rôle : <span id="role">user</span>
+  </div>
+
+  <!-- ===== ADMIN CODE ===== -->
+  <div class="admin-box">
+    <label>Code administrateur</label>
+    <input type="text" id="adminCode" placeholder="Code secret admin">
+    <button id="becomeAdmin">🔐 Devenir admin</button>
+    <div class="small">Accès réservé</div>
+    <button id="goAdminPage" style="margin-top:10px; display:none;">➡️ Aller vers Admin</button>
+  </div>
+
+  <button onclick="location.href='app509.html'">➡️ Aller vers Ａｐｐｓ⁵⁰９</button>
+  <button class="logout" id="logout">Déconnexion</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAufnNEFHPZLbMK-gwYotj4VB1bqBXw8l4",
+  authDomain: "app509cloud.firebaseapp.com",
+  projectId: "app509cloud",
+  storageBucket: "app509cloud.firebasestorage.app",
+  messagingSenderId: "445508086674",
+  appId: "1:445508086674:web:22d593d940bd328d436f4b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const emailEl = document.getElementById("email");
+const fullnameEl = document.getElementById("fullname");
+const roleEl = document.getElementById("role");
+const profilePicEl = document.getElementById("profilePic");
+const goAdminBtn = document.getElementById("goAdminPage");
+const profileContainer = document.getElementById("profileContainer");
+const noticeModal = document.getElementById("noticeModal");
+const acceptBtn = document.getElementById("acceptBtn");
+
+let currentUser = null;
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    location.href = "index.html";
+    return;
+  }
+
+  currentUser = user;
+  emailEl.textContent = user.email;
+  profilePicEl.src = user.photoURL || "https://via.placeholder.com/120";
+
+  const userRef = doc(db, "users", user.uid);
+  const snap = await getDoc(userRef);
+
+  if (!snap.exists()) {
+    await setDoc(userRef, {
+      fullname: user.displayName || "",
+      email: user.email,
+      role: "user",
+      photo: user.photoURL || "",
+      createdAt: serverTimestamp(),
+      lastLogin: serverTimestamp()
+    });
+  }
+
+  const data = (await getDoc(userRef)).data();
+  fullnameEl.value = data.fullname || "";
+  roleEl.textContent = data.role || "user";
+
+  if (data.role === "admin") {
+    goAdminBtn.style.display = "block";
+  }
+
+  // Affichage profil seulement si notice accepté
+  if (!sessionStorage.getItem('noticeAccepted')) {
+    noticeModal.style.display = 'flex';
+  } else {
+    profileContainer.style.display = 'block';
+  }
+});
+
+// Bouton accepter notice
+acceptBtn.addEventListener('click', () => {
+  sessionStorage.setItem('noticeAccepted', 'true');
+  noticeModal.style.display = 'none';
+  profileContainer.style.display = 'block';
+});
+
+// Sauvegarder profil
+document.getElementById("saveProfile").onclick = async () => {
+  if (!currentUser) return;
+  await updateDoc(doc(db, "users", currentUser.uid), {
+    fullname: fullnameEl.value
+  });
+  alert("✅ Profil enregistré");
+};
+
+// Devenir admin
+document.getElementById("becomeAdmin").onclick = async () => {
+  const code = document.getElementById("adminCode").value.trim();
+  if (code !== "098326623890") {
+    alert("❌ Code admin incorrect");
+    return;
+  }
+  await updateDoc(doc(db, "users", currentUser.uid), {
+    role: "admin"
+  });
+  roleEl.textContent = "admin";
+  goAdminBtn.style.display = "block";
+  alert("✅ Vous êtes maintenant admin");
+};
+
+// Aller vers admin.html
+goAdminBtn.onclick = () => {
+  location.href = "admin.html";
+};
+
+// Déconnexion
+document.getElementById("logout").onclick = async () => {
+  await signOut(auth);
+  sessionStorage.removeItem('noticeAccepted');
+  location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
