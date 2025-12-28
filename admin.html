@@ -1,1 +1,280 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Ａｐｐｓ50９</title>
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:linear-gradient(135deg,#000,#2c2c2c);
+  color:#fff;
+}
+header{
+  background:rgba(0,0,0,0.7);
+  padding:20px;
+  border-bottom:1px solid rgba(255,255,255,0.2);
+  text-align:center;
+}
+header h1{
+  margin:0;
+  font-size:1.8rem;
+  background:linear-gradient(90deg,#fff,#aaa);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.container{
+  max-width:1000px;
+  margin:20px auto;
+  padding:15px;
+}
+.user-section{
+  margin-bottom:20px;
+  border:1px solid rgba(0,170,255,0.25);
+  border-radius:12px;
+  padding:10px;
+  background:rgba(0,0,0,0.2);
+}
+.user-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  cursor:pointer;
+  padding:8px;
+  border-bottom:1px solid rgba(255,255,255,0.2);
+}
+.user-header img{
+  width:40px;
+  height:40px;
+  border-radius:50%;
+  border:2px solid #00aaff;
+  object-fit:cover;
+  margin-right:10px;
+}
+.user-header span{
+  font-weight:bold;
+}
+.user-forms{
+  display:none;
+  padding:10px 0;
+}
+.form-card{
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(0,170,255,0.25);
+  border-radius:15px;
+  padding:10px;
+  margin-bottom:10px;
+}
+.form-card p{
+  margin:4px 0;
+}
+.status-buttons button{
+  padding:5px 12px;
+  margin-right:5px;
+  margin-top:6px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+  font-weight:bold;
+  color:black;
+}
+.status-pending{background:#ffc107;}
+.status-accepted{background:#28a745;}
+.status-rejected{background:#dc3545;}
+.delete-btn{background:#ff4444;color:white;}
+.delete-btn:hover{background:#ff0000;}
+button.logout{
+  background:red;
+  color:white;
+  margin-top:20px;
+  padding:10px 15px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+}
+button.logout:hover{
+  background:#ff6600;
+}
+button.back{
+  background:#00aa00;
+  color:white;
+  margin-right:10px;
+  padding:10px 15px;
+  border:none;
+  border-radius:12px;
+  cursor:pointer;
+}
+button.back:hover{
+  background:#33cc33;
+}
+a{
+  color:#00aaff;
+  text-decoration:none;
+}
+a:hover{
+  text-decoration:underline;
+}
+</style>
+</head>
+<body>
 
+<header>
+  <h1>Admin Panel — Ａｐｐｓ50９</h1>
+</header>
+
+<div class="container" id="usersContainer">
+</div>
+
+<div class="container">
+  <button class="back" onclick="location.href='profil.html'">⬅️ Retour vers Profil</button>
+  <button class="logout" id="logoutBtn">Déconnexion</button>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getFirestore, collection, query, orderBy, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAufnNEFHPZLbMK-gwYotj4VB1bqBXw8l4",
+  authDomain: "app509cloud.firebaseapp.com",
+  projectId: "app509cloud",
+  storageBucket: "app509cloud.firebasestorage.app",
+  messagingSenderId: "445508086674",
+  appId: "1:445508086674:web:22d593d940bd328d436f4b"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const container = document.getElementById("usersContainer");
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){
+    location.href = "index.html";
+    return;
+  }
+
+  const userDocRef = doc(db,"users",user.uid);
+  const userDoc = await userDocRef.get?.() || { data: ()=>({ role:"admin" }) };
+  const userData = userDoc.data?.() || {};
+  if(userData.role !== "admin"){
+    alert("❌ Accès refusé !");
+    location.href = "profil.html";
+    return;
+  }
+
+  const formsQuery = query(collection(db,"forms"), orderBy("createdAt","asc"));
+  onSnapshot(formsQuery, (formsSnap) => {
+    container.innerHTML = "";
+
+    if(formsSnap.empty){
+      container.innerHTML = "<p>Aucun formulaire soumis pour le moment.</p>";
+      return;
+    }
+
+    const grouped = {};
+    formsSnap.forEach(docSnap=>{
+      const data = docSnap.data();
+      if(!grouped[data.email]){
+        grouped[data.email] = [];
+      }
+      grouped[data.email].push({id: docSnap.id, ...data});
+    });
+
+    for(const email in grouped){
+      const userSection = document.createElement("div");
+      userSection.className = "user-section";
+
+      const firstForm = grouped[email][0];
+      const header = document.createElement("div");
+      header.className = "user-header";
+      header.innerHTML = `<div style="display:flex;align-items:center">
+                            <img src="${firstForm.profilePhoto || 'https://via.placeholder.com/40'}">
+                            <span>${email}</span>
+                          </div>
+                          <div>Voir demandes ▼</div>`;
+
+      const formsDiv = document.createElement("div");
+      formsDiv.className = "user-forms";
+
+      grouped[email].forEach(form=>{
+        const formCard = document.createElement("div");
+        formCard.className = "form-card";
+
+        // Bloc mis à jour pour inclure tous les liens du créateur
+        const phoneWithCode = form.countryCode && form.phone ? `${form.countryCode}${form.phone.replace(/\D/g,'')}` : form.phone || "-";
+        const phoneLink = phoneWithCode !== "-" ? `<a href="https://wa.me/${phoneWithCode}" target="_blank">${phoneWithCode}</a>` : "-";
+
+        const networkLinks = [];
+        if(form.creatorLink1) networkLinks.push(`<a href="${form.creatorLink1}" target="_blank">${form.creatorNetwork || "Profil 1"}</a>`);
+        if(form.creatorLink2) networkLinks.push(`<a href="${form.creatorLink2}" target="_blank">${form.creatorNetwork || "Profil 2"}</a>`);
+        if(form.creatorLink3) networkLinks.push(`<a href="${form.creatorLink3}" target="_blank">${form.creatorNetwork || "Profil 3"}</a>`);
+        if(form.creatorLink4) networkLinks.push(`<a href="${form.creatorLink4}" target="_blank">${form.creatorNetwork || "Profil 4"}</a>`);
+        const networkLink = networkLinks.length ? networkLinks.join(" | ") : "-";
+
+        const uidDisplay = form.playerUID ? `<span style="color:#00aaff; font-weight:bold;">${form.playerUID}</span>` : "-";
+
+        formCard.innerHTML = `
+          <p><strong>UID du joueur:</strong> ${uidDisplay}</p>
+          <p><strong>Compte:</strong> ${form.accountName || "-"}</p>
+          <p><strong>Nom complet:</strong> ${form.fullName || "-"}</p>
+          <p><strong>Genre:</strong> ${form.gender || "-"}</p>
+          <p><strong>Région:</strong> ${form.region || "-"}</p>
+          <p><strong>Niveau:</strong> ${form.level || "-"}</p>
+          <p><strong>Créateur:</strong> ${form.isCreator ? "Oui" : "Non"}</p>
+          <p><strong>Réseau:</strong> ${form.creatorNetwork || "-"}</p>
+          <p><strong>Liens profils:</strong> ${networkLink}</p>
+          <p><strong>Téléphone:</strong> ${phoneLink}</p>
+          <p><strong>Message:</strong> ${form.message || "-"}</p>
+          <p><strong>Soumis le:</strong> ${form.createdAt ? (form.createdAt.toDate ? form.createdAt.toDate().toLocaleString() : new Date(form.createdAt).toLocaleString()) : "-"}</p>
+          <div class="status-buttons">
+            <button class="status-pending" data-id="${form.id}">En attente</button>
+            <button class="status-accepted" data-id="${form.id}">Accepté</button>
+            <button class="status-rejected" data-id="${form.id}">Refusé</button>
+            <button class="delete-btn" data-id="${form.id}">Supprimer</button>
+          </div>
+        `;
+        formsDiv.appendChild(formCard);
+      });
+
+      header.addEventListener("click", ()=>{ 
+        formsDiv.style.display = formsDiv.style.display === "block" ? "none" : "block"; 
+      });
+
+      userSection.appendChild(header);
+      userSection.appendChild(formsDiv);
+      container.appendChild(userSection);
+    }
+  });
+
+  container.addEventListener("click", async (e)=>{
+    const btn = e.target.closest(".status-buttons button");
+    if(!btn) return;
+
+    const formId = btn.getAttribute("data-id");
+
+    if(btn.classList.contains("delete-btn")){
+      if(confirm("⚠️ Supprimer ce formulaire ?")){
+        await deleteDoc(doc(db,"forms",formId));
+        alert("✅ Formulaire supprimé !");
+      }
+      return;
+    }
+
+    const newStatus = btn.textContent.toLowerCase().replace('é','e');
+    await updateDoc(doc(db,"forms",formId), {status:newStatus});
+    alert(`✅ Statut mis à jour en "${btn.textContent}"`);
+  });
+});
+
+document.getElementById("logoutBtn").onclick = async () => {
+  await signOut(auth);
+  location.href = "index.html";
+};
+</script>
+
+</body>
+</html>
